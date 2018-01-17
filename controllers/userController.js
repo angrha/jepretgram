@@ -8,7 +8,6 @@ const salt = bcrypt.genSaltSync(10);
 class UserController {
   static findAll(req, res) {
     User.find()
-    .populate('rumah')
     .then( users => {
       res.status(200).json({
         message : 'list all user',
@@ -20,7 +19,7 @@ class UserController {
 
   static createUser(req, res){
     let objUser = {
-      username : req.body.username,
+      email : req.body.email,
       password : bcrypt.hashSync(req.body.password, salt),
       status   : req.body.status || 'user'
     }
@@ -37,13 +36,14 @@ class UserController {
     .catch( err => res.status(500).send(err))
   }
 
+  // middleware (off)
   static updateUser(req, res) {
     User.findOne({
       _id : req.params.id,
-      username : req.decoded.username
+      email : req.decoded.email
     })
     .then( user => {
-      user.username = req.body.username || user.username,
+      user.email = req.body.email || user.email,
       user.password = req.body.password || user.password,
       user.status   = req.body.status || user.status,
 
@@ -72,9 +72,8 @@ class UserController {
 
   static register(req, res){
     let objUser = {
-      username : req.body.username,
-      password : bcrypt.hashSync(req.body.password, salt),
-      status   : 'user'
+      email    : req.body.email,
+      password : bcrypt.hashSync(req.body.password, salt)
     }
 
     let user = new User(objUser)
@@ -83,7 +82,7 @@ class UserController {
     .then( dataUser => {
       res.status(200).json({
         message : 'sign up success!',
-        user    : dataUser.username
+        user    : dataUser.email
       })
     })
     .catch( err => res.status(500).send(err))
@@ -91,7 +90,7 @@ class UserController {
 
   static login(req, res) {
     User.findOne({
-      username : req.body.username
+      email : req.body.email
     })
     .then( user => {
       if(!user) {
@@ -108,7 +107,7 @@ class UserController {
 
       let payload = {
         id       : user._id,
-        username : user.username,
+        email    : user.email,
         status   : user.status
       }
       

@@ -7,10 +7,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose   = require('mongoose');
                   require('dotenv').config()
-mongoose.connect('mongodb://localhost/jepretgram'); //connect to database
+mongoose.connect('mongodb://aang:aang@ds257077.mlab.com:57077/miniinstagram'); //connect to database
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const posts = require('./routes/posts');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/api/users', users);
+app.use('/api/posts', posts)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
